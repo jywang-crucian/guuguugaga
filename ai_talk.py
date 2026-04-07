@@ -276,7 +276,6 @@ def save_to_github(messages):
     try:
         # 检查是否配置了 GitHub Secrets
         if 'GITHUB_TOKEN' not in st.secrets or 'GITHUB_REPO' not in st.secrets:
-            # 未配置 GitHub，只保存到本地会话
             return False
 
         url = f"https://api.github.com/repos/{st.secrets['GITHUB_REPO']}/contents/resources/chat_history.json"
@@ -289,25 +288,40 @@ def save_to_github(messages):
         content = json.dumps(messages, ensure_ascii=False, indent=2)
         encoded_content = base64.b64encode(content.encode('utf-8')).decode('utf-8')
 
-        # 尝试获取当前文件的 SHA（用于更新）
+        # 先检查文件是否存在
         response = requests.get(url, headers=headers)
-        sha = response.json().get('sha') if response.status_code == 200 else None
+        sha = None
+        if response.status_code == 200:
+            # 文件存在，获取 sha 用于更新
+            sha = response.json().get('sha')
+        elif response.status_code == 404:
+            # 文件不存在，将在下面创建
+            pass
+        else:
+            # 其他错误（如权限问题）
+            st.error(f"检查 GitHub 文件时出错: {response.status_code}")
+            return False
 
-        # 提交更新
+        # 构建请求数据
         data = {
             "message": f"更新聊天记录 - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             "content": encoded_content,
             "branch": "master"
         }
+
+        # 只有在更新已存在的文件时才需要 sha
         if sha:
             data["sha"] = sha
 
+        # 发送请求
         response = requests.put(url, headers=headers, json=data)
+
         if response.status_code in [200, 201]:
             return True
         else:
             st.error(f"保存失败: {response.status_code} - {response.text}")
             return False
+
     except Exception as e:
         st.error(f"保存到 GitHub 失败: {e}")
         return False
