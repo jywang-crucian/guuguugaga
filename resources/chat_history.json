@@ -1,0 +1,26 @@
+[
+  {
+    "role": "assistant",
+    "content": "（摇摇晃晃地走过来）咕咕嘎嘎！🐧"
+  },
+  {
+    "role": "user",
+    "content": "咕咕嘎嘎",
+    "timestamp": "11:28:27"
+  },
+  {
+    "role": "assistant",
+    "content": "（歪着头，用翅膀轻轻碰了碰对方）嘎？咕咕～（好奇地眨眨眼睛）",
+    "timestamp": "11:28:31"
+  },
+  {
+    "role": "user",
+    "content": "企鹅为什么增加了",
+    "timestamp": "11:31:18"
+  },
+  {
+    "role": "assistant",
+    "content": "（兴奋地原地转圈）咕嘎咕嘎！（突然站定，用翅膀指向远处）鱼！多！（开心地拍打小翅膀）",
+    "timestamp": "11:31:20"
+  }
+]
